@@ -1,5 +1,6 @@
 import itertools as it
 import numpy
+import re
 
 
 def fix_expense_report(expenses, num_entries=2):
@@ -40,3 +41,100 @@ def toboggan_map_count_trees(map, slope):
         x = (x + slope[0]) % width  # map repeats indefinitely to the right
         y = y + slope[1]
     return tree_count
+
+
+def is_valid_passport(passport):
+    required_keys = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+    for key in required_keys:
+        if key not in passport:
+            return False
+    return True
+
+
+def is_valid_num(num, **kwargs):
+    length = kwargs.get("length", None)
+    min = kwargs.get("min", None)
+    max = kwargs.get("max", None)
+
+    if length is not None:
+        if len(str(num)) != length:
+            return False
+    if min is not None:
+        if num < min:
+            return False
+    if max is not None:
+        if num > max:
+            return False
+    return True
+
+
+def is_valid_birth_year(year):
+    return is_valid_num(year, length=4, min=1920, max=2002)
+
+
+def is_valid_issue_year(year):
+    return is_valid_num(year, length=4, min=2010, max=2020)
+
+
+def is_valid_expiration_year(year):
+    return is_valid_num(year, length=4, min=2020, max=2030)
+
+
+def is_valid_height(height):
+    pattern = "^([0-9]+)(cm|in)$"
+    result = re.search(pattern, height)
+    if result is None:
+        return False
+    if result.group(2) == "cm":
+        if not is_valid_num(int(result.group(1)), min=150, max=193):
+            return False
+    elif result.group(2) == "in":
+        if not is_valid_num(int(result.group(1)), min=59, max=76):
+            return False
+    else:
+        return False
+
+    return True
+
+
+def is_valid_hair_color(hair_color):
+    pattern = "^#[0-9a-f]{6}$"
+    result = re.search(pattern, hair_color)
+    if result is None:
+        return False
+    return True
+
+
+def is_valid_eye_color(eye_color):
+    eye_colors = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+    return eye_color in eye_colors
+
+
+def is_valid_passport_id(passport_id):
+    pattern = "^[0-9]{9}$"
+    result = re.search(pattern, passport_id)
+    if result is None:
+        return False
+    return True
+
+
+def is_valid_passport2(passport):
+    if not is_valid_passport(passport):
+        return False
+
+    if not is_valid_birth_year(int(passport["byr"])):
+        return False
+    if not is_valid_issue_year(int(passport["iyr"])):
+        return False
+    if not is_valid_expiration_year(int(passport["eyr"])):
+        return False
+    if not is_valid_height(passport["hgt"]):
+        return False
+    if not is_valid_hair_color(passport["hcl"]):
+        return False
+    if not is_valid_eye_color(passport["ecl"]):
+        return False
+    if not is_valid_passport_id(passport["pid"]):
+        return False
+
+    return True
