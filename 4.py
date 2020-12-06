@@ -18,11 +18,11 @@ with open("test/4_input.txt") as f:
         if aoc.is_valid_passport(passport):
             valid_passports = valid_passports + 1
 
-    print("3-1: %s" % valid_passports)
+    print("4-1: %s" % valid_passports)
 
     valid_passports = 0
     for passport in passport_list:
         if aoc.is_valid_passport2(passport):
             valid_passports = valid_passports + 1
 
-    print("3-2: %s" % valid_passports)
+    print("4-2: %s" % valid_passports)

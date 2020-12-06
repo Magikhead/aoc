@@ -105,5 +105,13 @@ class TestAoCDay4(unittest.TestCase):
         self.assertEqual(False, aoc.is_valid_passport_id("0123456789"))
 
 
+class TestAoCDay5(unittest.TestCase):
+    def test_decode_seat(self):
+        self.assertEqual((44, 5), aoc.decode_seat("FBFBBFFRLR"))
+
+    def test_seat_id(self):
+        self.assertEqual(357, aoc.seat_id((44, 5)))
+
+
 if __name__ == "__main__":
     unittest.main()

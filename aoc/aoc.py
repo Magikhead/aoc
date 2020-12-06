@@ -138,3 +138,20 @@ def is_valid_passport2(passport):
         return False
 
     return True
+
+
+def decode_seat(seat_code):
+    seat_code = seat_code.replace("F", "0")
+    seat_code = seat_code.replace("B", "1")
+    seat_code = seat_code.replace("L", "0")
+    seat_code = seat_code.replace("R", "1")
+    row = seat_code[0:7]
+    column = seat_code[-3:]
+    # convert from binary to int
+    row = int(row, 2)
+    column = int(column, 2)
+    return (row, column)
+
+
+def seat_id(seat):
+    return seat[0] * 8 + seat[1]
