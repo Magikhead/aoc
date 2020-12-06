@@ -113,5 +113,13 @@ class TestAoCDay5(unittest.TestCase):
         self.assertEqual(357, aoc.seat_id((44, 5)))
 
 
+class TestAoCDay6(unittest.TestCase):
+    def test_count_custom_forms(self):
+        self.assertEqual(3, len(aoc.count_customs_forms(["abc"])))
+        self.assertEqual(3, len(aoc.count_customs_forms(["a", "b", "c"])))
+        self.assertEqual(1, len(aoc.count_customs_forms(["a", "a", "a"])))
+        self.assertEqual(1, len(aoc.count_customs_forms(["b"])))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -155,3 +155,12 @@ def decode_seat(seat_code):
 
 def seat_id(seat):
     return seat[0] * 8 + seat[1]
+
+
+def count_customs_forms(forms):
+    answers = {}
+    for form in forms:
+        for question in form:
+            if question.isalpha():
+                answers[question] = answers.get(question, 0) + 1
+    return answers
