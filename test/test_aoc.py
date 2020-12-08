@@ -121,5 +121,63 @@ class TestAoCDay6(unittest.TestCase):
         self.assertEqual(1, len(aoc.count_customs_forms(["b"])))
 
 
+class TestAoCDay7(unittest.TestCase):
+    def test_parse_bag_line(self):
+        self.assertEqual(
+            ("vibrant bronze", ["2 dim fuchsia"]),
+            aoc.parse_bag_line("vibrant bronze bags contain 2 dim fuchsia bags."),
+        )
+        self.assertEqual(
+            ("light red", ["1 bright white", "2 muted yellow"]),
+            aoc.parse_bag_line(
+                "light red bags contain 1 bright white bag, 2 muted yellow bags."
+            ),
+        )
+        self.assertEqual(
+            ("dotted black", ["no other"]),
+            aoc.parse_bag_line("dotted black bags contain no other bags."),
+        )
+
+    def test_check_bag_color(self):
+        bag_rules = {"dark chartreuse": ["1 dark maroon", "5 shiny gold"]}
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "shiny gold", bag_rules)
+        )
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "dark chartreuse", bag_rules)
+        )
+
+    def test_check_bag_color_many_rules(self):
+        bag_rules = {
+            "light red": ["1 bright white", "2 muted yellow"],
+            "dark orange": ["3 bright white", "4 muted yellow"],
+            "bright white": ["1 shiny gold"],
+            "muted yellow": ["2 shiny gold", "9 faded blue"],
+            "shiny gold": ["1 dark olive", "2 vibrant plum"],
+            "dark olive": ["3 faded blue", "4 dotted black"],
+            "vibrant plum": ["5 faded blue", "6 dotted black"],
+            "faded blue": ["no other"],
+            "dotted black": ["no other"],
+        }
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "bright white", bag_rules)
+        )
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "muted yellow", bag_rules)
+        )
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "dark orange", bag_rules)
+        )
+        self.assertEqual(
+            True, aoc.check_bag_color("shiny gold", "light red", bag_rules)
+        )
+        self.assertEqual(
+            False, aoc.check_bag_color("shiny gold", "dark olive", bag_rules)
+        )
+        self.assertEqual(
+            False, aoc.check_bag_color("shiny gold", "dotted black", bag_rules)
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

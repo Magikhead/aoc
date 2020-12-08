@@ -1,6 +1,7 @@
 import itertools as it
 import numpy
 import re
+import string
 
 
 def fix_expense_report(expenses, num_entries=2):
@@ -164,3 +165,40 @@ def count_customs_forms(forms):
             if question.isalpha():
                 answers[question] = answers.get(question, 0) + 1
     return answers
+
+
+def parse_bag_line(line):
+    line = line.translate(str.maketrans("", "", string.punctuation))
+    line = line.replace(" bags", "")
+    line = line.replace(" bag", "")
+    line = line.split(" contain ")
+    bag_color = line[0]
+    bag_contents = line[1].split(" ")
+    bag_contents = [
+        " ".join(bag_contents[i : i + 3]) for i in range(0, len(bag_contents), 3)
+    ]
+    return (bag_color, bag_contents)
+
+
+def check_bag_color(target_color, bag_color, bag_rules):
+    if bag_color == "no other":
+        return False
+    if bag_color == target_color:
+        return True
+    for color in bag_rules.get(bag_color, []):
+        color = color.split(" ", 1)[1]  # remove leading number
+        if check_bag_color(target_color, color, bag_rules):
+            return True
+    return False
+
+
+def count_bags(bag_color, bag_rules):
+    num_bags = 1
+    for color in bag_rules.get(bag_color, ["no other"]):
+        if color == "no other":
+            num_bags = num_bags
+            continue
+        number = int(color.split(" ", 1)[0])
+        color = color.split(" ", 1)[1]
+        num_bags = num_bags + (number * count_bags(color, bag_rules))
+    return num_bags
