@@ -179,5 +179,20 @@ class TestAoCDay7(unittest.TestCase):
         )
 
 
+class TestAoCDay8(unittest.TestCase):
+    def test_run_program(self):
+        program = [aoc.Instruction(aoc.OpCode.nop, 0)]
+        self.assertEqual((0, [0]), aoc.run_program(program))
+
+    def test_parse_instruction(self):
+        instruction = aoc.Instruction(aoc.OpCode.nop, 0)
+        self.assertEqual(instruction, aoc.parse_instruction("nop +0"))
+
+    def test_flip_instruction(self):
+        instruction = aoc.Instruction(aoc.OpCode.nop, 0)
+        instruction = aoc.flip_instruction(instruction)
+        self.assertEqual(instruction, aoc.Instruction(aoc.OpCode.jmp, 0))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -2,6 +2,7 @@ import itertools as it
 import numpy
 import re
 import string
+from enum import Enum
 
 
 def fix_expense_report(expenses, num_entries=2):
@@ -202,3 +203,57 @@ def count_bags(bag_color, bag_rules):
         color = color.split(" ", 1)[1]
         num_bags = num_bags + (number * count_bags(color, bag_rules))
     return num_bags
+
+
+class OpCode(Enum):
+    acc = 0
+    jmp = 1
+    nop = 2
+
+
+class Instruction:
+    def __init__(self, opcode, value):
+        self.opcode = opcode
+        self.value = value
+
+    def __eq__(self, other):
+        if self.opcode != other.opcode:
+            return False
+        if self.value != other.value:
+            return False
+        return True
+
+    def __repr__(self):
+        return "%s %s" % (self.opcode, self.value)
+
+
+def flip_instruction(instruction):
+    if instruction.opcode == OpCode.nop:
+        instruction.opcode = OpCode.jmp
+    elif instruction.opcode == OpCode.jmp:
+        instruction.opcode = OpCode.nop
+    return instruction
+
+
+def run_program(program, ptr=0):
+    accumulator = 0
+    ptr_history = []
+    while ptr < len(program):
+        if ptr in ptr_history:
+            return (accumulator, ptr_history)
+        else:
+            ptr_history.append(ptr)
+        instruction = program[ptr]
+        if instruction.opcode == OpCode.acc:
+            accumulator = accumulator + instruction.value
+            ptr = ptr + 1
+        elif instruction.opcode == OpCode.jmp:
+            ptr = ptr + instruction.value
+        elif instruction.opcode == OpCode.nop:
+            ptr = ptr + 1
+    return (accumulator, ptr_history)
+
+
+def parse_instruction(line):
+    line = line.split()
+    return Instruction(OpCode[line[0]], int(line[1]))
