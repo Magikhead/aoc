@@ -257,3 +257,34 @@ def run_program(program, ptr=0):
 def parse_instruction(line):
     line = line.split()
     return Instruction(OpCode[line[0]], int(line[1]))
+
+
+def find_sum_pair(target, xmas_list):
+    for pair in it.permutations(xmas_list, 2):
+        if pair[0] + pair[1] == target:
+            return pair
+    return None
+
+
+def find_contiguous_sum(target, xmas_list, window_size):
+    for index in range(0, len(xmas_list)):
+        slice = xmas_list[index : index + window_size]
+        contiguous_sum = sum(slice)
+        if contiguous_sum == target:
+            return slice
+
+
+def xmas_find_non_sum(xmas_list, preamble_length=25):
+    index = preamble_length
+    for index in range(preamble_length, len(xmas_list)):
+        preamble = xmas_list[index - preamble_length : index]
+        number = xmas_list[index]
+        if find_sum_pair(number, preamble) is None:
+            return number
+
+
+def xmas_find_weakness(target, xmas_list):
+    for window_size in range(2, len(xmas_list)):
+        slice = find_contiguous_sum(target, xmas_list, window_size)
+        if slice:
+            return min(slice) + max(slice)

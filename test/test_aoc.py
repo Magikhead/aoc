@@ -194,5 +194,60 @@ class TestAoCDay8(unittest.TestCase):
         self.assertEqual(instruction, aoc.Instruction(aoc.OpCode.jmp, 0))
 
 
+class TestAoCDay9(unittest.TestCase):
+    def test_find_sum_pair(self):
+        self.assertEqual((15, 25), aoc.find_sum_pair(40, [35, 20, 15, 25]))
+
+    def test_xmas_find_non_sum(self):
+        ciphertext = [
+            35,
+            20,
+            15,
+            25,
+            47,
+            40,
+            62,
+            55,
+            65,
+            95,
+            102,
+            117,
+            150,
+            182,
+            127,
+            219,
+            299,
+            277,
+            309,
+            576,
+        ]
+        self.assertEqual(127, aoc.xmas_find_non_sum(ciphertext, 5))
+
+    def test_xmas_find_weakness(self):
+        ciphertext = [
+            35,
+            20,
+            15,
+            25,
+            47,
+            40,
+            62,
+            55,
+            65,
+            95,
+            102,
+            117,
+            150,
+            182,
+            127,
+            219,
+            299,
+            277,
+            309,
+            576,
+        ]
+        self.assertEqual(62, aoc.xmas_find_weakness(127, ciphertext))
+
+
 if __name__ == "__main__":
     unittest.main()
