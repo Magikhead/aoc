@@ -249,5 +249,19 @@ class TestAoCDay9(unittest.TestCase):
         self.assertEqual(62, aoc.xmas_find_weakness(127, ciphertext))
 
 
+class TestAoCDay10(unittest.TestCase):
+    def test_count_jolt_differences(self):
+        adapters = [0, 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19, 22]
+        self.assertDictEqual({1: 7, 3: 5}, aoc.count_jolt_differences(adapters))
+
+    def test_find_next_adapter(self):
+        adapters = [0, 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19, 22]
+        self.assertEqual([1], aoc.find_next_adapter(0, adapters, 3))
+
+    def test_count_adapter_combinations(self):
+        adapters = [0, 1, 4, 5, 6, 7, 10, 11, 12, 15, 16, 19, 22]
+        self.assertEqual(8, aoc.count_adapter_combinations(adapters))
+
+
 if __name__ == "__main__":
     unittest.main()

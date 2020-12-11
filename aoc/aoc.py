@@ -288,3 +288,43 @@ def xmas_find_weakness(target, xmas_list):
         slice = find_contiguous_sum(target, xmas_list, window_size)
         if slice:
             return min(slice) + max(slice)
+
+
+def count_jolt_differences(adapters):
+    jolt_array = {}
+    for index in range(len(adapters) - 1):
+        difference = adapters[index + 1] - adapters[index]
+        jolt_array[difference] = jolt_array.get(difference, 0) + 1
+    return jolt_array
+
+
+def find_next_adapter(index, adapters, max_difference):
+    next_adapter = []
+    current_joltage = adapters[index]
+    index = index + 1
+    while index < len(adapters):
+        joltage = adapters[index]
+        if joltage - current_joltage <= max_difference:
+            next_adapter.append(index)
+        else:
+            break
+        index = index + 1
+    return next_adapter
+
+
+def count_adapter_combinations(adapters, lookup={}):
+    # counting adapter combinations can be split into sub-probrems that are
+    # uniquely identifable by the first adapter in the list
+    combo_id = adapters[0]
+    if combo_id in lookup:
+        return lookup[combo_id]
+
+    if len(adapters) == 1:
+        return 1
+
+    next_adapters = find_next_adapter(0, adapters, 3)
+    count = 0
+    for adapter in next_adapters:
+        count = count + count_adapter_combinations(adapters[adapter:], lookup)
+    lookup[combo_id] = count
+    return count
