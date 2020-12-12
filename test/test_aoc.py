@@ -263,5 +263,47 @@ class TestAoCDay10(unittest.TestCase):
         self.assertEqual(8, aoc.count_adapter_combinations(adapters))
 
 
+class TestAoCDay11(unittest.TestCase):
+    def test_get_seat(self):
+        waiting_area = aoc.WaitingArea([["L", "#"]])
+        self.assertEqual("L", waiting_area.get_seat((0, 0)))
+        self.assertEqual("#", waiting_area.get_seat((1, 0)))
+
+    def test_count_occupied_neighbors(self):
+        waiting_area = aoc.WaitingArea([["L", "#"]])
+        self.assertEqual(1, waiting_area.count_occupied_neighbors(0, 0))
+        self.assertEqual(0, waiting_area.count_occupied_neighbors(1, 0))
+
+    def test_count_occupied_neighbors_square(self):
+        waiting_area = aoc.WaitingArea([["L", "#"], ["#", "#"]])
+        self.assertEqual(3, waiting_area.count_occupied_neighbors(0, 0))
+        self.assertEqual(2, waiting_area.count_occupied_neighbors(0, 1))
+
+    def test_count_occupied_neighbors_medium(self):
+        waiting_area = aoc.WaitingArea(
+            [["#", ".", "#"], ["#", "#", "#"], ["#", ".", "#"]]
+        )
+        self.assertEqual(3, waiting_area.count_occupied_neighbors(0, 1))
+        self.assertEqual(6, waiting_area.count_occupied_neighbors(1, 1))
+
+    def test_waiting_area_step(self):
+        waiting_area = aoc.WaitingArea(
+            [["#", "#", "#"], ["#", "#", "#"], ["#", ".", "#"]]
+        )
+        self.assertEqual("#", waiting_area.get_seat((1, 0)))
+        waiting_area.step()
+        self.assertEqual("L", waiting_area.get_seat((1, 0)))
+
+    def test_count_occupied_neighbors_visible_sightline(self):
+        waiting_area = aoc.WaitingArea(
+            [["#", ".", "#"], ["#", "#", "#"], ["#", ".", "#"]], max_depth=None
+        )
+        self.assertEqual(3, waiting_area.count_occupied_neighbors(0, 0))
+
+    def test_count_occupied_neighbors_empty_seat_in_sightline(self):
+        waiting_area = aoc.WaitingArea([[".", "L", ".", "L", "#"]], max_depth=None)
+        self.assertEqual(0, waiting_area.count_occupied_neighbors(0, 0))
+
+
 if __name__ == "__main__":
     unittest.main()

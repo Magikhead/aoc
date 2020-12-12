@@ -2,6 +2,7 @@ import itertools as it
 import numpy
 import re
 import string
+import copy
 from enum import Enum
 
 
@@ -328,3 +329,116 @@ def count_adapter_combinations(adapters, lookup={}):
         count = count + count_adapter_combinations(adapters[adapter:], lookup)
     lookup[combo_id] = count
     return count
+
+
+class WaitingArea:
+    def __init__(self, seats, max_depth=1, neighbor_threshold=4):
+        self.seats = seats
+        self.empty = "L"
+        self.occupied = "#"
+        self.floor = "."
+        self.default_directions = [
+            (-1, 1),
+            (0, 1),
+            (1, 1),
+            (1, 0),
+            (1, -1),
+            (0, -1),
+            (-1, -1),
+            (-1, 0),
+        ]
+        self.max_depth = max_depth
+        self.neighbor_threshold = neighbor_threshold
+        self.width = len(seats[0])
+        self.height = len(seats)
+
+    def get_seat(self, coordinates):
+        x = coordinates[0]
+        y = coordinates[1]
+        if x < 0 or y < 0:
+            return None
+        try:
+            status = self.seats[y][x]
+        except:
+            return None
+        return status
+
+    def count_occupied(self):
+        total = 0
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.get_seat((col, row)) == self.occupied:
+                    total = total + 1
+        return total
+
+    def find_occupied_neighbors(
+        self,
+        x,
+        y,
+        directions,
+        depth=1,
+        occupied_neighbors=[],
+    ):
+        if len(directions) == 0:
+            return occupied_neighbors
+        elif self.max_depth and depth > self.max_depth:
+            return occupied_neighbors
+        search_directions = copy.deepcopy(directions)
+        for direction in search_directions:
+            direction_depth = tuple(d * depth for d in direction)
+            coordinates = (x + direction_depth[0], y + direction_depth[1])
+            seat = self.get_seat(coordinates)
+            if seat == None:  # out of bounds
+                directions.remove(direction)
+            elif seat == self.empty:
+                directions.remove(direction)
+            elif seat == self.occupied:
+                occupied_neighbors.append(coordinates)
+                directions.remove(direction)
+        return self.find_occupied_neighbors(
+            x, y, directions, depth + 1, occupied_neighbors
+        )
+
+    def count_occupied_neighbors(self, x, y):
+        neighbors = self.find_occupied_neighbors(
+            x,
+            y,
+            directions=copy.deepcopy(self.default_directions),
+            depth=1,
+            occupied_neighbors=[],
+        )
+        return len(neighbors)
+
+    def __str__(self):
+        string = ""
+        for row in self.seats:
+            string = string + "".join(row) + "\n"
+        return string
+
+    def step(self):
+        changed = False
+        updated_seats = copy.deepcopy(self.seats)
+        for row in range(self.height):
+            for col in range(self.width):
+                seat = self.get_seat((col, row))
+                if seat == self.floor:
+                    updated_seats[row][col] = self.floor
+                    continue
+                occupied_neighbors = self.count_occupied_neighbors(col, row)
+                if seat == self.empty and occupied_neighbors == 0:
+                    updated_seats[row][col] = self.occupied
+                    changed = True
+                elif (
+                    seat == self.occupied
+                    and occupied_neighbors >= self.neighbor_threshold
+                ):
+                    updated_seats[row][col] = self.empty
+                    changed = True
+        self.seats = updated_seats
+        return changed
+
+    def run(self):
+        counter = 0
+        while self.step():
+            counter = counter + 1
+        return counter

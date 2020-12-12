@@ -17,4 +17,5 @@ with open("test/10_input.txt") as f:
 
     adapters_list.sort()
     answer = aoc.count_adapter_combinations(adapters_list)
+
     print("10-2: %s" % answer)
