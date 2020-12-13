@@ -305,5 +305,45 @@ class TestAoCDay11(unittest.TestCase):
         self.assertEqual(0, waiting_area.count_occupied_neighbors(0, 0))
 
 
+class TestAocDay12(unittest.TestCase):
+    def test_ferry(self):
+        navigation_instructions = ["F10", "N3", "F7", "R90", "F11"]
+        ferry = aoc.Ferry()
+        ferry.move("F10")
+        self.assertEqual((10, 0), ferry.get_coordinates())
+        ferry.move("N3")
+        self.assertEqual((10, 3), ferry.get_coordinates())
+        ferry.move("F7")
+        self.assertEqual((17, 3), ferry.get_coordinates())
+        ferry.move("R90")
+        self.assertEqual(90, ferry.get_bearing())
+        self.assertEqual((17, 3), ferry.get_coordinates())
+        ferry.move("F11")
+        self.assertEqual((17, -8), ferry.get_coordinates())
+        coordinates = ferry.get_coordinates()
+        manhattan_distance = abs(coordinates[0]) + abs(coordinates[1])
+        self.assertEqual(25, manhattan_distance)
+
+    def test_waypoint_ferry(self):
+        navigation_instructions = ["F10", "N3", "F7", "R90", "F11"]
+        ferry = aoc.WaypointFerry()
+        self.assertEqual((10, 1), ferry.get_waypoint())
+        ferry.move("F10")
+        self.assertEqual((100, 10), ferry.get_coordinates())
+        ferry.move("N3")
+        self.assertEqual((10, 4), ferry.get_waypoint())
+        self.assertEqual((100, 10), ferry.get_coordinates())
+        ferry.move("F7")
+        self.assertEqual((170, 38), ferry.get_coordinates())
+        ferry.move("R90")
+        self.assertEqual((4, -10), ferry.get_waypoint())
+        self.assertEqual((170, 38), ferry.get_coordinates())
+        ferry.move("F11")
+        self.assertEqual((214, -72), ferry.get_coordinates())
+        coordinates = ferry.get_coordinates()
+        manhattan_distance = abs(coordinates[0]) + abs(coordinates[1])
+        self.assertEqual(286, manhattan_distance)
+
+
 if __name__ == "__main__":
     unittest.main()

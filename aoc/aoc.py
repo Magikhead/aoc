@@ -442,3 +442,104 @@ class WaitingArea:
         while self.step():
             counter = counter + 1
         return counter
+
+
+class Ferry:
+    def __init__(self):
+        self.coordinates = (0, 0)
+        self.bearing = 0  # due east
+
+    def move_north(self, distance):
+        self.coordinates = (self.coordinates[0], self.coordinates[1] + distance)
+
+    def move_east(self, distance):
+        self.coordinates = (self.coordinates[0] + distance, self.coordinates[1])
+
+    def move_south(self, distance):
+        self.coordinates = (self.coordinates[0], self.coordinates[1] - distance)
+
+    def move_west(self, distance):
+        self.coordinates = (self.coordinates[0] - distance, self.coordinates[1])
+
+    def turn_left(self, degrees):
+        self.bearing = (self.bearing - degrees) % 360
+
+    def turn_right(self, degrees):
+        self.bearing = (self.bearing + degrees) % 360
+
+    def move_forward(self, distance):
+        if self.bearing == 270:  # north
+            self.move_north(distance)
+        elif self.bearing == 0:  # east
+            self.move_east(distance)
+        elif self.bearing == 90:  # south
+            self.move_south(distance)
+        elif self.bearing == 180:  # west
+            self.move_west(distance)
+
+    def move(self, instruction):
+        action = instruction[0:1]
+        scalar = int(instruction[1:])
+        if action == "N":
+            self.move_north(scalar)
+        elif action == "S":
+            self.move_south(scalar)
+        elif action == "E":
+            self.move_east(scalar)
+        elif action == "W":
+            self.move_west(scalar)
+        elif action == "L":
+            self.turn_left(scalar)
+        elif action == "R":
+            self.turn_right(scalar)
+        elif action == "F":
+            self.move_forward(scalar)
+
+    def get_bearing(self):
+        return self.bearing
+
+    def get_coordinates(self):
+        return self.coordinates
+
+
+class WaypointFerry(Ferry):
+    def __init__(self, waypoint=(10, 1)):
+        super().__init__()
+        self.waypoint = waypoint
+
+    def get_waypoint(self):
+        return self.waypoint
+
+    def move_north(self, distance):
+        self.waypoint = (self.waypoint[0], self.waypoint[1] + distance)
+
+    def move_east(self, distance):
+        self.waypoint = (self.waypoint[0] + distance, self.waypoint[1])
+
+    def move_south(self, distance):
+        self.waypoint = (self.waypoint[0], self.waypoint[1] - distance)
+
+    def move_west(self, distance):
+        self.waypoint = (self.waypoint[0] - distance, self.waypoint[1])
+
+    def rotate_90_clockwise(self):
+        x, y = self.get_waypoint()
+        self.waypoint = (y, -x)
+
+    def rotate_90_counter_clockwise(self):
+        x, y = self.get_waypoint()
+        self.waypoint = (-y, x)
+
+    def turn_left(self, degrees):
+        for x in range(int(degrees / 90)):
+            self.rotate_90_counter_clockwise()
+
+    def turn_right(self, degrees):
+        for x in range(int(degrees / 90)):
+            self.rotate_90_clockwise()
+
+    def move_forward(self, distance):
+        x, y = self.get_coordinates()
+        x = x + (distance * self.waypoint[0])
+        y = y + (distance * self.waypoint[1])
+        self.coordinates = (x, y)
