@@ -3,6 +3,7 @@ import numpy
 import re
 import string
 import copy
+import math
 from enum import Enum
 
 
@@ -543,3 +544,72 @@ class WaypointFerry(Ferry):
         x = x + (distance * self.waypoint[0])
         y = y + (distance * self.waypoint[1])
         self.coordinates = (x, y)
+
+
+class Emulator:
+    def __init__(self):
+        self.mask = ""
+        self.memory = {}
+
+    def execute(self, instruction):
+        op, value = instruction.split(" = ")
+        if "mask" in instruction:
+            self.set_mask(value)
+        elif "mem" in instruction:
+            addr = int(op[4:-1])
+            value = int(value)
+            self.set_memory(addr, value)
+
+    def set_mask(self, mask):
+        self.mask = mask
+
+    def calc_mask(self, value):
+        output = ""
+        binary = "{0:036b}".format(value)
+        for i in range(36):
+            if self.mask[i] == "0":
+                output = output + "0"
+            elif self.mask[i] == "1":
+                output = output + "1"
+            elif self.mask[i] == "X":
+                output = output + binary[i]
+        output = int(output, 2)
+        return output
+
+    def set_memory(self, addr, value):
+        output = self.calc_mask(value)
+        self.memory[addr] = output
+
+
+class Emulator2(Emulator):
+    def __init__(self):
+        super().__init__()
+
+    def set_floating_memory(self, addr, value):
+        floating_bits = addr.count("X")
+        for i in range(2 ** floating_bits):
+            pattern = "{0:0%db}" % floating_bits
+            bits = pattern.format(i)
+            new_addr = ""
+            for c in addr:
+                if c == "X":
+                    new_addr = new_addr + bits[0]
+                    bits = bits[1:]
+                else:
+                    new_addr = new_addr + c
+            new_addr = int(new_addr, 2)
+            self.memory[new_addr] = value
+
+    def set_memory(self, addr, value):
+        dest = ""
+        addr_binary = "{0:036b}".format(addr)
+        binary = "{0:036b}".format(value)
+        for i in range(36):
+            if self.mask[i] == "0":
+                dest = dest + addr_binary[i]
+            elif self.mask[i] == "1":
+                dest = dest + "1"
+            elif self.mask[i] == "X":
+                dest = dest + "X"
+
+        self.set_floating_memory(dest, value)
