@@ -546,6 +546,41 @@ class WaypointFerry(Ferry):
         self.coordinates = (x, y)
 
 
+def find_next_bus(start_time, schedule):
+    time = start_time
+    while True:
+        for bus in schedule:
+            if bus == "x":
+                continue
+            if time % bus == 0:
+                return (time, bus)
+        time = time + 1
+
+
+def calculate_product(schedule):
+    product = 1
+    for bus in schedule:
+        if bus == "x":
+            pass
+        else:
+            product = product * bus
+    return product
+
+
+def find_minute_offset_timestamp(schedule):
+    product = calculate_product(schedule)
+    sum = 0
+    for index in range(len(schedule)):
+        bus_id = schedule[index]
+        if bus_id == "x":
+            continue
+        remainder = index - bus_id
+        pi = int(product / bus_id)
+        inverse = pow(pi, -1, bus_id)
+        sum = sum + (remainder * pi * inverse)
+    return product - (sum % product)
+
+
 class Emulator:
     def __init__(self):
         self.mask = ""

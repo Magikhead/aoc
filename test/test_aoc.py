@@ -345,5 +345,24 @@ class TestAocDay12(unittest.TestCase):
         self.assertEqual(286, manhattan_distance)
 
 
+class TestAocDay13(unittest.TestCase):
+    def test_find_next_bus(self):
+        self.assertEqual((944, 59), aoc.find_next_bus(939, [7, 13, 59, 31, 19]))
+
+    def test_find_minute_offset_timestamp(self):
+        self.assertEqual(3417, aoc.find_minute_offset_timestamp([17, "x", 13, 19]))
+
+    def test_find_minute_offset_timestamp(self):
+        self.assertEqual(
+            1202161486, aoc.find_minute_offset_timestamp([1789, 37, 47, 1889])
+        )
+
+    def test_find_minute_offset_timestamp(self):
+        self.assertEqual(
+            1068781,
+            aoc.find_minute_offset_timestamp([7, 13, "x", "x", 59, "x", 31, 19]),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
