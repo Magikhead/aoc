@@ -7,7 +7,7 @@ fn main() {
     problem_1();
 }
 
-fn count_increases(numbers: Vec<i64>, window: usize) -> i64 {
+fn count_increases(numbers: &Vec<i64>, window: usize) -> i64 {
     let mut count = 0;
 
     for (pos, _elt) in numbers.iter().enumerate() {
@@ -17,15 +17,15 @@ fn count_increases(numbers: Vec<i64>, window: usize) -> i64 {
             continue;
         }
 
-        let previous = &numbers[pos - window..pos].iter().sum();
+        let previous: &i64 = &numbers[pos - window..pos].iter().sum();
         let current: &i64 = &numbers[pos - window + 1..end].iter().sum();
 
         if current > previous {
-            count = count + 1
+            count += 1
         }
     }
 
-    return count;
+    count
 }
 
 fn problem_1() {
@@ -39,8 +39,8 @@ fn problem_1() {
         .map(|line| line.unwrap().parse::<i64>().unwrap())
         .collect();
 
-    println!("problem 1a: {}", count_increases(numbers.clone(), 1));
-    println!("problem 1b: {}", count_increases(numbers.clone(), 3));
+    println!("problem 1a: {}", count_increases(&numbers, 1));
+    println!("problem 1b: {}", count_increases(&numbers, 3));
 }
 
 #[cfg(test)]
@@ -50,12 +50,12 @@ mod tests {
     #[test]
     fn test_count_increases_window_size_1() {
         let numbers = vec![0, 1, 2];
-        assert!(2 == count_increases(numbers, 1));
+        assert!(2 == count_increases(&numbers, 1));
     }
 
     #[test]
     fn test_count_increases_window_size_3() {
         let numbers = vec![0, 1, 2, 3, 4, 5];
-        assert!(3 == count_increases(numbers, 3));
+        assert!(3 == count_increases(&numbers, 3));
     }
 }
